@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>VMess 解码 / 修改 / 编码 工具</title>
+<style>
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", sans-serif;
+    background: linear-gradient(135deg, rgba(240,248,255,0.8), rgba(255,255,255,0.4));
+    backdrop-filter: blur(10px);
+    margin: 0;
+    padding: 40px 10px;
+    display: flex;
+    justify-content: center;
+  }
+  .container {
+    background: rgba(255,255,255,0.35);
+    border-radius: 20px;
+    box-shadow: 0 4px 30px rgba(0,0,0,0.1);
+    padding: 30px;
+    width: 100%;
+    max-width: 600px;
+  }
+  h2 {
+    text-align: center;
+    margin-top: 0;
+  }
+  textarea {
+    width: 100%;
+    height: 90px;
+    border: none;
+    border-radius: 12px;
+    padding: 10px;
+    outline: none;
+    font-size: 14px;
+    resize: none;
+    background: rgba(255,255,255,0.6);
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
+  }
+  button {
+    background: linear-gradient(90deg, #007aff, #5ac8fa);
+    border: none;
+    color: white;
+    font-weight: 600;
+    padding: 8px 16px;
+    border-radius: 10px;
+    cursor: pointer;
+    margin: 10px 5px;
+    transition: 0.3s;
+  }
+  button:hover { opacity: 0.9; }
+  .fields {
+    margin-top: 20px;
+  }
+  .field {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 8px 0;
+  }
+  .field label {
+    width: 80px;
+    font-weight: 500;
+  }
+  .field input {
+    flex: 1;
+    padding: 5px 8px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    outline: none;
+  }
+  #resultLink {
+    word-break: break-all;
+    font-size: 13px;
+    background: rgba(255,255,255,0.6);
+    border-radius: 10px;
+    padding: 10px;
+    margin-top: 15px;
+  }
+  #qrcode {
+    margin-top: 15px;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h2>🍎 VMess 可视化编辑器</h2>
+  <textarea id="vmessInput" placeholder="输入 vmess:// 链接"></textarea><br>
+  <button onclick="decodeVMess()">解码</button>
+  <button onclick="encodeVMess()">编码</button>
+
+  <div id="fields" class="fields"></div>
+
+  <div id="resultLink"></div>
+  <div id="qrcode"></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs2@0.0.2/qrcode.min.js"></script>
+<script>
+let currentData = null;
+
+function decodeVMess() {
+  const input = document.getElementById("vmessInput").value.trim();
+  if (!input.startsWith("vmess://")) {
+    alert("请输入正确的 vmess:// 链接");
+    return;
+  }
+  try {
+    const base64 = input.replace("vmess://", "");
+    const jsonStr = decodeURIComponent(escape(atob(base64)));
+    currentData = JSON.parse(jsonStr);
+  } catch (e) {
+    alert("解析失败，请检查格式");
+    return;
+  }
+
+  const fields = document.getElementById("fields");
+  fields.innerHTML = "";
+  for (const key in currentData) {
+    fields.innerHTML += `
+      <div class="field">
+        <label>${key}</label>
+        <input type="text" id="field_${key}" value="${currentData[key]}">
+      </div>`;
+  }
+}
+
+function encodeVMess() {
+  if (!currentData) {
+    alert("请先解码 VMess 链接");
+    return;
+  }
+
+  // 更新字段
+  for (const key in currentData) {
+    const el = document.getElementById("field_" + key);
+    if (el) currentData[key] = el.value;
+  }
+
+  const newJson = JSON.stringify(currentData);
+  const encoded = "vmess://" + btoa(unescape(encodeURIComponent(newJson)));
+
+  document.getElementById("resultLink").innerHTML = 
+    `<b>生成的 VMess 链接：</b><br>${encoded}`;
+
+  const qrDiv = document.getElementById("qrcode");
+  qrDiv.innerHTML = "";
+  new QRCode(qrDiv, { text: encoded, width: 180, height: 180 });
+}
+</script>
+</body>
+</html>
