@@ -26,21 +26,26 @@
     transition: background 0.5s, color 0.5s;
   }
 
-  @media (prefers-color-scheme: dark) {
-    body {
-      background: var(--bg-dark);
-      color: var(--text-dark);
-    }
-    .container {
-      background: var(--card-dark);
-      box-shadow: 0 4px 30px rgba(255,255,255,0.05);
-    }
-    textarea, input {
-      background: rgba(255,255,255,0.1);
-      color: #ddd;
-      border: 1px solid rgba(255,255,255,0.1);
-    }
+@media (prefers-color-scheme: dark) {
+  body {
+    background: var(--bg-dark);
+    color: var(--text-dark);
   }
+  .container {
+    background: var(--card-dark);
+    box-shadow: 0 4px 30px rgba(255,255,255,0.05);
+  }
+  textarea, input {
+    background: rgba(255,255,255,0.1);
+    color: #eee;           /* 修改这里，文字变亮 */
+    border: 1px solid rgba(255,255,255,0.2);
+  }
+  #resultLink {
+    background: rgba(255,255,255,0.1);
+    color: #eee;           /* 修改这里，文字变亮 */
+  }
+}
+
 
   .container {
     background: var(--card-light);
