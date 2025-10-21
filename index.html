@@ -5,22 +5,51 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>VMess 解码 / 修改 / 编码 工具</title>
 <style>
+  :root {
+    --bg-light: linear-gradient(135deg, rgba(240,248,255,0.8), rgba(255,255,255,0.4));
+    --bg-dark: linear-gradient(135deg, rgba(25,25,25,0.8), rgba(40,40,40,0.6));
+    --text-light: #222;
+    --text-dark: #eee;
+    --card-light: rgba(255,255,255,0.35);
+    --card-dark: rgba(50,50,50,0.4);
+  }
+
   body {
     font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", sans-serif;
-    background: linear-gradient(135deg, rgba(240,248,255,0.8), rgba(255,255,255,0.4));
+    background: var(--bg-light);
     backdrop-filter: blur(10px);
     margin: 0;
     padding: 40px 10px;
     display: flex;
     justify-content: center;
+    color: var(--text-light);
+    transition: background 0.5s, color 0.5s;
   }
+
+  @media (prefers-color-scheme: dark) {
+    body {
+      background: var(--bg-dark);
+      color: var(--text-dark);
+    }
+    .container {
+      background: var(--card-dark);
+      box-shadow: 0 4px 30px rgba(255,255,255,0.05);
+    }
+    textarea, input {
+      background: rgba(255,255,255,0.1);
+      color: #ddd;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+  }
+
   .container {
-    background: rgba(255,255,255,0.35);
+    background: var(--card-light);
     border-radius: 20px;
     box-shadow: 0 4px 30px rgba(0,0,0,0.1);
     padding: 30px;
     width: 100%;
     max-width: 600px;
+    transition: background 0.5s;
   }
   h2 {
     text-align: center;
@@ -70,6 +99,10 @@
     border: 1px solid #ccc;
     outline: none;
   }
+  #resultBox {
+    margin-top: 20px;
+    text-align: center;
+  }
   #resultLink {
     word-break: break-all;
     font-size: 13px;
@@ -93,8 +126,11 @@
 
   <div id="fields" class="fields"></div>
 
-  <div id="resultLink"></div>
-  <div id="qrcode"></div>
+  <div id="resultBox">
+    <div id="resultLink"></div>
+    <button id="copyBtn" style="display:none;" onclick="copyLink()">复制链接</button>
+    <div id="qrcode"></div>
+  </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/qrcodejs2@0.0.2/qrcode.min.js"></script>
@@ -122,7 +158,7 @@ function decodeVMess() {
     fields.innerHTML += `
       <div class="field">
         <label>${key}</label>
-        <input type="text" id="field_${key}" value="${currentData[key]}">
+        <input type="text" id="field_${key}" value="${currentData[key] ?? ''}">
       </div>`;
   }
 }
@@ -133,7 +169,6 @@ function encodeVMess() {
     return;
   }
 
-  // 更新字段
   for (const key in currentData) {
     const el = document.getElementById("field_" + key);
     if (el) currentData[key] = el.value;
@@ -144,10 +179,21 @@ function encodeVMess() {
 
   document.getElementById("resultLink").innerHTML = 
     `<b>生成的 VMess 链接：</b><br>${encoded}`;
+  document.getElementById("copyBtn").style.display = "inline-block";
 
   const qrDiv = document.getElementById("qrcode");
   qrDiv.innerHTML = "";
   new QRCode(qrDiv, { text: encoded, width: 180, height: 180 });
+}
+
+function copyLink() {
+  const text = document.getElementById("resultLink").innerText;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.getElementById("copyBtn");
+    const old = btn.innerText;
+    btn.innerText = "✅ 已复制";
+    setTimeout(() => (btn.innerText = old), 1500);
+  });
 }
 </script>
 </body>
