@@ -1,214 +1,29 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>VMess 解码 / 修改 / 编码 工具</title>
-<style>
-:root {
-  --bg-light: linear-gradient(135deg, rgba(240,248,255,0.8), rgba(255,255,255,0.4));
-  --bg-dark: linear-gradient(135deg, rgba(25,25,25,0.8), rgba(40,40,40,0.6));
-  --text-light: #222;
-  --text-dark: #eee;
-  --card-light: rgba(255,255,255,0.35);
-  --card-dark: rgba(50,50,50,0.4);
-}
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>VMess 可视化编辑器 - 在线解码编码工具</title>
+    <meta name="description" content="专业的 VMess 链接可视化编辑工具，支持在线解码、编码和二维码生成，简单易用的界面设计。">
+    <meta name="keywords" content="VMess, 解码, 编码, 二维码生成, 可视化编辑器">
+    <meta name="author" content="Lovable" />
 
-body {
-  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", sans-serif;
-  background: var(--bg-light);
-  backdrop-filter: blur(10px);
-  margin: 0;
-  padding: 40px 10px;
-  display: flex;
-  justify-content: center;
-  color: var(--text-light);
-  transition: background 0.5s, color 0.5s;
-}
+    
+    
+    <meta property="og:type" content="website" />
 
-@media (prefers-color-scheme: dark) {
-  body {
-    background: var(--bg-dark);
-    color: var(--text-dark);
-  }
-  .container {
-    background: var(--card-dark);
-    box-shadow: 0 4px 30px rgba(255,255,255,0.05);
-  }
-  textarea, input {
-    background: rgba(255,255,255,0.1);
-    color: #eee;           /* 文字变亮 */
-    border: 1px solid rgba(255,255,255,0.2);
-  }
-  #resultLink {
-    background: rgba(255,255,255,0.1);
-    color: #eee;           /* 文字变亮 */
-  }
-}
-
-.container {
-  background: var(--card-light);
-  border-radius: 20px;
-  box-shadow: 0 4px 30px rgba(0,0,0,0.1);
-  padding: 30px;
-  width: 100%;
-  max-width: 600px;
-  transition: background 0.5s;
-}
-
-h2 {
-  text-align: center;
-  margin-top: 0;
-}
-
-textarea {
-  width: 100%;
-  height: 90px;
-  border: none;
-  border-radius: 12px;
-  padding: 10px;
-  outline: none;
-  font-size: 14px;
-  resize: none;
-  background: rgba(255,255,255,0.6);
-  box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
-}
-
-button {
-  background: linear-gradient(90deg, #007aff, #5ac8fa);
-  border: none;
-  color: white;
-  font-weight: 600;
-  padding: 8px 16px;
-  border-radius: 10px;
-  cursor: pointer;
-  margin: 10px 5px;
-  transition: 0.3s;
-}
-button:hover { opacity: 0.9; }
-
-.fields {
-  margin-top: 20px;
-}
-
-.field {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin: 8px 0;
-}
-
-.field label {
-  width: 80px;
-  font-weight: 500;
-}
-
-.field input {
-  flex: 1;
-  padding: 5px 8px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  outline: none;
-}
-
-#resultBox {
-  margin-top: 20px;
-  text-align: center;
-}
-
-#resultLink {
-  word-break: break-all;
-  font-size: 13px;
-  background: rgba(255,255,255,0.6);
-  border-radius: 10px;
-  padding: 10px;
-  margin-top: 15px;
-}
-
-#qrcode {
-  margin-top: 15px;
-  text-align: center;
-}
-</style>
+    <meta name="twitter:card" content="summary_large_image" />
+    
+    <meta property="og:title" content="VMess 可视化编辑器 - 在线解码编码工具">
+  <meta name="twitter:title" content="VMess 可视化编辑器 - 在线解码编码工具">
+  <meta property="og:description" content="专业的 VMess 链接可视化编辑工具，支持在线解码、编码和二维码生成，简单易用的界面设计。">
+  <meta name="twitter:description" content="专业的 VMess 链接可视化编辑工具，支持在线解码、编码和二维码生成，简单易用的界面设计。">
+  <link rel="icon" type="image/x-icon" href="https://storage.googleapis.com/gpt-engineer-file-uploads/QAdvYehq0nV8koBlIgdYOhEgTRZ2/uploads/1761064381323-Cloudflare_1.png">
+  <script type="module" crossorigin src="/assets/index-1UKHUAkg.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-9c4LU4ML.css">
 </head>
-<body>
-<div class="container">
-  <h2>🍎 VMess 可视化编辑器</h2>
-  <textarea id="vmessInput" placeholder="输入 vmess:// 链接"></textarea><br>
-  <button onclick="decodeVMess()">解码</button>
-  <button onclick="encodeVMess()">编码</button>
 
-  <div id="fields" class="fields"></div>
-
-  <div id="resultBox">
-    <div id="resultLink"></div>
-    <button id="copyBtn" style="display:none;" onclick="copyLink()">复制链接</button>
-    <div id="qrcode"></div>
-  </div>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/qrcodejs2@0.0.2/qrcode.min.js"></script>
-<script>
-let currentData = null;
-
-function decodeVMess() {
-  const input = document.getElementById("vmessInput").value.trim();
-  if (!input.startsWith("vmess://")) {
-    alert("请输入正确的 vmess:// 链接");
-    return;
-  }
-  try {
-    const base64 = input.replace("vmess://", "");
-    const jsonStr = decodeURIComponent(escape(atob(base64)));
-    currentData = JSON.parse(jsonStr);
-  } catch (e) {
-    alert("解析失败，请检查格式");
-    return;
-  }
-
-  const fields = document.getElementById("fields");
-  fields.innerHTML = "";
-  for (const key in currentData) {
-    fields.innerHTML += `
-      <div class="field">
-        <label>${key}</label>
-        <input type="text" id="field_${key}" value="${currentData[key] ?? ''}">
-      </div>`;
-  }
-}
-
-function encodeVMess() {
-  if (!currentData) {
-    alert("请先解码 VMess 链接");
-    return;
-  }
-
-  for (const key in currentData) {
-    const el = document.getElementById("field_" + key);
-    if (el) currentData[key] = el.value;
-  }
-
-  const newJson = JSON.stringify(currentData);
-  const encoded = "vmess://" + btoa(unescape(encodeURIComponent(newJson)));
-
-  document.getElementById("resultLink").innerHTML = 
-    `<b>生成的 VMess 链接：</b><br>${encoded}`;
-  document.getElementById("copyBtn").style.display = "inline-block";
-
-  const qrDiv = document.getElementById("qrcode");
-  qrDiv.innerHTML = "";
-  new QRCode(qrDiv, { text: encoded, width: 180, height: 180 });
-}
-
-function copyLink() {
-  const text = document.getElementById("resultLink").innerText;
-  navigator.clipboard.writeText(text).then(() => {
-    const btn = document.getElementById("copyBtn");
-    const old = btn.innerText;
-    btn.innerText = "✅ 已复制";
-    setTimeout(() => (btn.innerText = old), 1500);
-  });
-}
-</script>
-</body>
+  <body>
+    <div id="root"></div>
+  </body>
 </html>
