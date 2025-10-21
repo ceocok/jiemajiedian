@@ -3,28 +3,28 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>VMess解编码 </title>
+<title>VMess 解码 / 修改 / 编码 工具</title>
 <style>
-  :root {
-    --bg-light: linear-gradient(135deg, rgba(240,248,255,0.8), rgba(255,255,255,0.4));
-    --bg-dark: linear-gradient(135deg, rgba(25,25,25,0.8), rgba(40,40,40,0.6));
-    --text-light: #222;
-    --text-dark: #eee;
-    --card-light: rgba(255,255,255,0.35);
-    --card-dark: rgba(50,50,50,0.4);
-  }
+:root {
+  --bg-light: linear-gradient(135deg, rgba(240,248,255,0.8), rgba(255,255,255,0.4));
+  --bg-dark: linear-gradient(135deg, rgba(25,25,25,0.8), rgba(40,40,40,0.6));
+  --text-light: #222;
+  --text-dark: #eee;
+  --card-light: rgba(255,255,255,0.35);
+  --card-dark: rgba(50,50,50,0.4);
+}
 
-  body {
-    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", sans-serif;
-    background: var(--bg-light);
-    backdrop-filter: blur(10px);
-    margin: 0;
-    padding: 40px 10px;
-    display: flex;
-    justify-content: center;
-    color: var(--text-light);
-    transition: background 0.5s, color 0.5s;
-  }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", sans-serif;
+  background: var(--bg-light);
+  backdrop-filter: blur(10px);
+  margin: 0;
+  padding: 40px 10px;
+  display: flex;
+  justify-content: center;
+  color: var(--text-light);
+  transition: background 0.5s, color 0.5s;
+}
 
 @media (prefers-color-scheme: dark) {
   body {
@@ -37,89 +37,98 @@
   }
   textarea, input {
     background: rgba(255,255,255,0.1);
-    color: #eee;           /* 修改这里，文字变亮 */
+    color: #eee;           /* 文字变亮 */
     border: 1px solid rgba(255,255,255,0.2);
   }
   #resultLink {
     background: rgba(255,255,255,0.1);
-    color: #eee;           /* 修改这里，文字变亮 */
+    color: #eee;           /* 文字变亮 */
   }
 }
 
+.container {
+  background: var(--card-light);
+  border-radius: 20px;
+  box-shadow: 0 4px 30px rgba(0,0,0,0.1);
+  padding: 30px;
+  width: 100%;
+  max-width: 600px;
+  transition: background 0.5s;
+}
 
-  .container {
-    background: var(--card-light);
-    border-radius: 20px;
-    box-shadow: 0 4px 30px rgba(0,0,0,0.1);
-    padding: 30px;
-    width: 100%;
-    max-width: 600px;
-    transition: background 0.5s;
-  }
-  h2 {
-    text-align: center;
-    margin-top: 0;
-  }
-  textarea {
-    width: 100%;
-    height: 90px;
-    border: none;
-    border-radius: 12px;
-    padding: 10px;
-    outline: none;
-    font-size: 14px;
-    resize: none;
-    background: rgba(255,255,255,0.6);
-    box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
-  }
-  button {
-    background: linear-gradient(90deg, #007aff, #5ac8fa);
-    border: none;
-    color: white;
-    font-weight: 600;
-    padding: 8px 16px;
-    border-radius: 10px;
-    cursor: pointer;
-    margin: 10px 5px;
-    transition: 0.3s;
-  }
-  button:hover { opacity: 0.9; }
-  .fields {
-    margin-top: 20px;
-  }
-  .field {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin: 8px 0;
-  }
-  .field label {
-    width: 80px;
-    font-weight: 500;
-  }
-  .field input {
-    flex: 1;
-    padding: 5px 8px;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-    outline: none;
-  }
-  #resultBox {
-    margin-top: 20px;
-    text-align: center;
-  }
-  #resultLink {
-    word-break: break-all;
-    font-size: 13px;
-    background: rgba(255,255,255,0.6);
-    border-radius: 10px;
-    padding: 10px;
-    margin-top: 15px;
-  }
-  #qrcode {
-    margin-top: 15px;
-    text-align: center;
-  }
+h2 {
+  text-align: center;
+  margin-top: 0;
+}
+
+textarea {
+  width: 100%;
+  height: 90px;
+  border: none;
+  border-radius: 12px;
+  padding: 10px;
+  outline: none;
+  font-size: 14px;
+  resize: none;
+  background: rgba(255,255,255,0.6);
+  box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
+}
+
+button {
+  background: linear-gradient(90deg, #007aff, #5ac8fa);
+  border: none;
+  color: white;
+  font-weight: 600;
+  padding: 8px 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  margin: 10px 5px;
+  transition: 0.3s;
+}
+button:hover { opacity: 0.9; }
+
+.fields {
+  margin-top: 20px;
+}
+
+.field {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 8px 0;
+}
+
+.field label {
+  width: 80px;
+  font-weight: 500;
+}
+
+.field input {
+  flex: 1;
+  padding: 5px 8px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  outline: none;
+}
+
+#resultBox {
+  margin-top: 20px;
+  text-align: center;
+}
+
+#resultLink {
+  word-break: break-all;
+  font-size: 13px;
+  background: rgba(255,255,255,0.6);
+  border-radius: 10px;
+  padding: 10px;
+  margin-top: 15px;
+}
+
+#qrcode {
+  margin-top: 15px;
+  text-align: center;
+}
 </style>
 </head>
 <body>
